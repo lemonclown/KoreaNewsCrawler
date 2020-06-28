@@ -61,3 +61,5 @@ KoreaNewsCrawler.egg-info/PKG-INFO
 KoreaNewsCrawler.egg-info/requires.txt
 KoreaNewsCrawler.egg-info/SOURCES.txt
 KoreaNewsCrawler.egg-info/top_level.txt
+
+*.pyc

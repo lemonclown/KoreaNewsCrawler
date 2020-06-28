@@ -7,6 +7,7 @@ from multiprocessing import Process
 from korea_news_crawler.exceptions import *
 from korea_news_crawler.articleparser import ArticleParser
 from korea_news_crawler.writer import Writer
+from korea_news_crawler.dbmanager import DBManager
 import os
 import platform
 import calendar
@@ -90,9 +91,11 @@ class ArticleCrawler(object):
 
     def crawling(self, category_name):
         # Multi Process PID
-        print(category_name + " PID: " + str(os.getpid()))    
+        print(category_name + " PID: " + str(os.getpid()))
 
-        writer = Writer(category_name=category_name, date=self.date)
+        dbManager = DBManager('username', 'password', 'database')
+
+        # writer = Writer(category_name=category_name, date=self.date)
 
         # 기사 URL 형식
         url = "http://news.naver.com/main/list.nhn?mode=LSD&mid=sec&sid1=" + str(self.categories.get(category_name)) + "&date="
@@ -156,8 +159,9 @@ class ArticleCrawler(object):
                         continue
                         
                     # CSV 작성
-                    wcsv = writer.get_writer_csv()
-                    wcsv.writerow([news_date, category_name, text_company, text_headline, text_sentence, content_url])
+                    # wcsv = writer.get_writer_csv()
+                    dbManager.insert_news(category_name, text_company, text_headline, text_sentence, content_url, news_date)
+                    # wcsv.writerow([news_date, category_name, text_company, text_headline, text_sentence, content_url])
                     
                     del text_company, text_sentence, text_headline
                     del tag_company 
@@ -165,8 +169,8 @@ class ArticleCrawler(object):
                     del request_content, document_content
 
                 except Exception as ex:  # UnicodeEncodeError ..
-                    # wcsv.writerow([ex, content_url])
                     del request_content, document_content
+                    print(ex)
                     pass
         writer.close()
 
