@@ -31,3 +31,15 @@ class DBManager(object):
             self.cnx.commit()
         except Exception as e:
             print(e)
+
+    def select_url(self, url):
+        params = locals()
+        del params['self']
+        query = ("SELECT count(*) FROM news WHERE url=%(url)s")
+        cursor = self.cnx.cursor()
+        try:
+            cursor.execute(query, params)
+            res = cursor.fetchall()
+            return int(res[0][0])
+        except Exception as e:
+            print(e)

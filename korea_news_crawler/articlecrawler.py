@@ -102,7 +102,7 @@ class ArticleCrawler(object):
 
         # start_year년 start_month월 ~ end_year의 end_month 날짜까지 기사를 수집합니다.
         day_urls = self.make_news_page_url(url, self.date['start_year'], self.date['end_year'], self.date['start_month'], self.date['end_month'])
-        print(category_name + " Urls are generated")
+        print(category_name + " Urls are generated : " + str(len(day_urls)))
         print("The crawler starts")
 
         for URL in day_urls:
@@ -126,6 +126,10 @@ class ArticleCrawler(object):
             del post_temp
 
             for content_url in post:  # 기사 URL
+                url_count = dbManager.select_url(content_url)
+                if url_count:
+                    print(f"{content_url} exists, skip")
+                    continue
                 # 크롤링 대기 시간
                 sleep(0.01)
                 
@@ -172,7 +176,7 @@ class ArticleCrawler(object):
                     del request_content, document_content
                     print(ex)
                     pass
-        writer.close()
+        # writer.close()
 
     def start(self):
         # MultiProcess 크롤링 시작
